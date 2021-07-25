@@ -134,10 +134,10 @@ def read_users():
 async def create_codes(contest_id:int= Form(...),name:str= Form(...), file: bytes = File(...),current_user:User = Depends(get_current_user)):
     print(current_user,contest_id,file)
     code = models.Code.create(user_id=current_user.id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
-
+    print(file.file)
     with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
-        shutil.copyfileobj(file, buffer)
-
+        #shutil.copyfileobj(file, buffer)
+        buffer.write(file)
     return code.__data__ 
 
 @app.get("/codes/{code_id}")
@@ -198,7 +198,7 @@ async def read_entry():
 @app.post("/debug/codes/")
 async def create_codes(contest_id:int= Form(...),name:str= Form(...),user_id:int= Form(...), file: UploadFile = File(...)):
     code = models.Code.create(user_id=user_id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
-    print(file.file)
+    
     with open("./static/submit/a"+str(code.id)+".py", "wb") as buffer:
         buffer.write(file)
         #shutil.copyfileobj(file.file, buffer)
