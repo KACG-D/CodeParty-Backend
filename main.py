@@ -44,6 +44,12 @@ class UserIn(BaseModel):
     name: str
     password: str
 
+
+class UserUp(BaseModel):
+    name: str
+    password: str
+    email:str
+
 def return_data(ret):
     return ret
 
@@ -84,7 +90,7 @@ async def create_contests(name:str,description:str,file:UploadFile =File(...)):
     contest = models.Contest.create(name=name,discription=discription,thumb = "http://35.75.64.1:8000/static/thumb/")
 
     with open("./static/thumb/"+str(contest.id)+".py", "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        shutil.copyfileobj(file, buffer)
 
     return contest.__data__ 
 
@@ -109,8 +115,8 @@ def read_user(user_id: int):
     return models.User.get_by_id(user_id).__data__ 
 
 @app.post("/users/")
-async def create_user(user_in: UserIn):
-    user = models.User.create(name=user_in.name,password= user_in.password,is_admin = False)
+async def create_user(user_up: UserIn):
+    user = models.User.create(name=user_up.name,password= user_up.password,is_admin = False,email = user_up.email)
     auth = authenticate(user.name, user.password)
     ret_dict = {}
     ret_dict["name"] = user.name
