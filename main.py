@@ -137,7 +137,7 @@ async def create_codes(contest_id:int= Form(...),name:str= Form(...), file: byte
 
     with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
         #shutil.copyfileobj(file, buffer)
-        buffer.write(file)
+        buffer.write(file[0])
     return code.__data__ 
 
 @app.get("/codes/{code_id}")
