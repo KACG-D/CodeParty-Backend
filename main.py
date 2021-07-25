@@ -123,6 +123,17 @@ async def create_user(user_up: UserUp):
     ret_dict["tokens"] = create_tokens(user.id)
     return ret_dict
 
+@app.post("/users/icon")
+async def create_user_icon(file: UploadFile = File(...),current_user:User = Depends(get_current_user)):
+    user = models.User.get_by_id(current_user.id)
+    path =  "./static/usericon/s"+str(current_user.id)+".png"
+    user.icon = path
+    user.save()
+    with open(path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return user
+
 @app.get("/users/")
 def read_users():
     ret = models.User.select()
@@ -135,7 +146,7 @@ async def create_codes(contest_id:int= Form(...),name:str= Form(...), file: Uplo
     print(current_user,contest_id,file)
     code = models.Code.create(user_id=current_user.id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
 
-    with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
+    with open("./static/submit/a"+str(code.id)+".py", "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         #buffer.write(file)
     return code.__data__ 
