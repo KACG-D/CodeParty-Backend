@@ -4,7 +4,7 @@ db = SqliteDatabase('db.sqlite3')
 
 class User(Model):
     id = AutoField(primary_key=True)
-    name = CharField(100,unique = true)
+    name = CharField(100,unique = True)
     password = CharField(100)
     refresh_token = TextField(null=True)
     is_admin = BooleanField()
