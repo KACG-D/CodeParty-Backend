@@ -9,7 +9,7 @@ class User(Model):
     refresh_token = TextField(null=True)
     is_admin = BooleanField()
     icon = TextField(null=True)
-    email = CharField(100,unique = true)
+    email = CharField(100,unique = True)
     class Meta:
         database = db
 
