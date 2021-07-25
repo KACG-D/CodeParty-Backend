@@ -79,8 +79,13 @@ async def read_contests():
 
 
 @app.post("/contests/")
-async def create_contests(name:str,description:str):
-    contest = models.Contest.create(name=name,discription=discription)
+async def create_contests(name:str,description:str,file:UploadFile =File(...)):
+    thumb = dt_now.strftime('%Y%m%d%H%M%S')
+    contest = models.Contest.create(name=name,discription=discription,thumb = "http://35.75.64.1:8000/static/thumb/")
+
+    with open("./static/thumb/"+str(contest.id)+".py", "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
     return contest.__data__ 
 
 @app.get("/contests/{contest_id}/codes")
@@ -120,7 +125,7 @@ def read_users():
 
 # Code 
 @app.post("/codes/")
-async def create_codes(contest_id:int,name:str, file: bytes = File(...),current_user:User = Depends(get_current_user)):
+async def create_codes(contest_id:int= Form(...),name:str= Form(...), file: bytes = File(...),current_user:User = Depends(get_current_user)):
     print(current_user,contest_id,file)
     code = models.Code.create(user_id=current_user.id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
 
@@ -148,6 +153,8 @@ async def read_codes():
 @app.post("/rooms/", status_code=201)
 async def create_room(contest_id:int,current_user:User = Depends(get_current_user)):
     room = models.Room.create(contest_id =contest_id)
+
+
     return room.__data__ 
 
 @app.get("/rooms/{room_id}")
@@ -182,7 +189,7 @@ async def read_entry():
 
 # Debug 
 @app.post("/debug/codes/")
-async def create_codes(contest_id:int,name:str,user_id:int, file: UploadFile = File(...)):
+async def create_codes(contest_id:int= Form(...),name:str= Form(...),user_id:int= Form(...), file: UploadFile = File(...)):
     code = models.Code.create(user_id=user_id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
 
     with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
