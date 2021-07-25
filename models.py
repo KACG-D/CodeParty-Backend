@@ -52,5 +52,5 @@ db.create_tables([Entry])
 
 # ユーザーデータ挿入
 User.create(name='tanaka', password='secret_tanaka',is_admin=False,email = "hoge@hoge.com")
-User.create(name='kobayashi', password='secret_kobayashi',is_admin=True,email = "hoge@hoge.com")
+User.create(name='kobayashi', password='secret_kobayashi',is_admin=True,email = "hoge1@hoge.com")
 Contest.create(name='Square Drop #1', description='デモ用のコンテストです',)
