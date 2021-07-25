@@ -115,7 +115,7 @@ def read_user(user_id: int):
     return models.User.get_by_id(user_id).__data__ 
 
 @app.post("/users/")
-async def create_user(user_up: UserIn):
+async def create_user(user_up: UserUp):
     user = models.User.create(name=user_up.name,password= user_up.password,is_admin = False,email = user_up.email)
     auth = authenticate(user.name, user.password)
     ret_dict = {}
