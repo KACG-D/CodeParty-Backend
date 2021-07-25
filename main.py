@@ -132,9 +132,9 @@ def read_users():
 # Code 
 @app.post("/codes/")
 async def create_codes(contest_id:int= Form(...),name:str= Form(...), file: bytes = File(...),current_user:User = Depends(get_current_user)):
-    print(current_user,contest_id,file,file.file)
+    print(current_user,contest_id,file)
     code = models.Code.create(user_id=current_user.id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
-    print(file.file)
+
     with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
         #shutil.copyfileobj(file, buffer)
         buffer.write(file)
