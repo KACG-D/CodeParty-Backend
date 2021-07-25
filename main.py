@@ -175,7 +175,8 @@ async def read_rooms():
 
 @app.get("/rooms/{room_id}/run")
 async def run_room(room_id: int):
-    json = execute(["codeparty_simulator.players.sample2"]*4,room_id)
+    entries = models.Entry.select().where(models.Entry.room_id ==room_id)
+    json = execute(["codeparty_simulator.players.a"+entry.id for entry in entries],room_id)
     return json
 
 ##Entry 
@@ -198,8 +199,9 @@ async def read_entry():
 async def create_codes(contest_id:int= Form(...),name:str= Form(...),user_id:int= Form(...), file: UploadFile = File(...)):
     code = models.Code.create(user_id=user_id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
 
-    with open("./static/submit/"+str(code.id)+".py", "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    with open("./static/submit/a"+str(code.id)+".py", "wb") as buffer:
+        buffer.write(file.file)
+        #shutil.copyfileobj(file.file, buffer)
 
     return code.__data__ 
 
