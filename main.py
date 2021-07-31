@@ -1,5 +1,5 @@
 
-from fastapi import Depends, FastAPI ,  File, UploadFile,Form
+from fastapi import Depends, FastAPI ,  File, UploadFile,Form,Query
 from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -190,7 +190,7 @@ async def run_room(room_id: int):
     return json
 
 @app.post("/rooms/submit")
-async def room_submit(contest_id:int, code_ids:List[int] =Form(...)):
+async def room_submit(contest_id:int, code_ids:List[int]= Query(None)):
     room = models.Room.create(contest_id =contest_id)
     for cid in code_ids:
         create_entry(room_id=room.id,code_id=cid)
