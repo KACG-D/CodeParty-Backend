@@ -95,10 +95,10 @@ async def read_contests():
 async def create_contests(name:str,description:str,file:UploadFile =File(...)):
     thumb = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     contest = models.Contest.create(name=name,description=description,thumb = "http://35.75.64.1:8000/static/thumb/")
-
-    with open("./static/thumb/"+str(contest.id)+".py", "wb") as buffer:
-        shutil.copyfileobj(file, buffer)
-
+    with open("./static/thumb/"+str(contest.id)+".png", "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    contest.thumb = "http://35.75.64.1:8000/static/thumb/"+str(contest.id)+".png"
+    contest.save()
     return contest.__data__ 
 
 @app.get("/contests/{contest_id}/codes")
@@ -133,7 +133,7 @@ async def create_user(user_up: UserUp):
 @app.post("/users/icon")
 async def create_user_icon(file: UploadFile = File(...),current_user:User = Depends(get_current_user)):
     user = models.User.get_by_id(current_user.id)
-    path =  "./static/usericon/s"+str(current_user.id)+".png"
+    path =  "http://35.75.64.1:8000/static/usericon/s"+str(current_user.id)+".png"
     user.icon = path
     user.save()
     with open(path, "wb") as buffer:
