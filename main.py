@@ -229,8 +229,7 @@ async def create_codes(contest_id:int= Form(...),name:str= Form(...),user_id:int
     code = models.Code.create(user_id=user_id,contest_id= contest_id,time = datetime.datetime.now(),name=name)
     
     with open("./static/submit/a"+str(code.id)+".py", "wb") as buffer:
-        buffer.write(file)
-        #shutil.copyfileobj(file.file, buffer)
+        buffer.write(file.file)
 
     return code.__data__ 
 
