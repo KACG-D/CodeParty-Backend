@@ -194,7 +194,7 @@ async def read_rooms():
 #async 
 def run_room(room_id: int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
-    json = execute(["static.submit.a"+str(entry.id) for entry in entries],room_id)
+    json = execute(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
     return json
 
 @app.post("/rooms/submit")
