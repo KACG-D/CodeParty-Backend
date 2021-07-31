@@ -36,7 +36,7 @@ class Room(Model):
     id = AutoField(primary_key=True)
     contest_id = IntegerField()
     time = DateTimeField(default=datetime.datetime.now)
-    json_path = CharField(100,nullable = True)
+    json_path = CharField(100,null = True)
     class Meta:
         database = db
 
