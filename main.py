@@ -94,7 +94,7 @@ async def read_contests():
 @app.post("/contests/")
 async def create_contests(name:str,description:str,file:UploadFile =File(...)):
     thumb = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    contest = models.Contest.create(name=name,discription=discription,thumb = "http://35.75.64.1:8000/static/thumb/")
+    contest = models.Contest.create(name=name,description=description,thumb = "http://35.75.64.1:8000/static/thumb/")
 
     with open("./static/thumb/"+str(contest.id)+".py", "wb") as buffer:
         shutil.copyfileobj(file, buffer)

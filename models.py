@@ -19,7 +19,7 @@ class Contest(Model):
     name = CharField(100)
     description = TextField(null=True)
     thumb = TextField(null=True)
-
+    
     class Meta:
         database = db
 
