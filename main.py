@@ -193,14 +193,14 @@ async def run_room(room_id: int):
 async def room_submit(contest_id:int, code_ids:List[int]= Query(None)):
     room = models.Room.create(contest_id =contest_id)
     for cid in code_ids:
-        create_entry(room_id=room.id,code_id=cid)
+        models.Entry.create(room_id = room.id,code_id=cid)
 
     return room.__data__
 
 ##Entry 
 @app.post("/entries/", status_code=201)
 async def create_entry(room_id:int,code_id:int):
-    room = models.Entry.create(room_id = room_id)
+    room = models.Entry.create(room_id = room_id,code_id=code_id)
     return room.__data__ 
 
 @app.get("/entries/{entry_id}")
