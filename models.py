@@ -1,4 +1,5 @@
 from peewee import SqliteDatabase, Model, AutoField, CharField, TextField,BooleanField,IntegerField ,DateTimeField
+import datetime
 
 db = SqliteDatabase('db.sqlite3')
 
@@ -18,6 +19,7 @@ class Contest(Model):
     name = CharField(100)
     description = TextField(null=True)
     thumb = TextField(null=True)
+
     class Meta:
         database = db
 
@@ -33,7 +35,8 @@ class Code(Model):
 class Room(Model):
     id = AutoField(primary_key=True)
     contest_id = IntegerField()
-
+    time = peewee.DateTimeField(default=datetime.datetime.now)
+    json_path = CharField(100,nullable = true)
     class Meta:
         database = db
 

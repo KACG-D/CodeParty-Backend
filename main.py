@@ -186,11 +186,13 @@ async def read_room(room_id: int):
 @app.get("/rooms/")
 async def read_rooms():
     ret = models.Room.select()
-    return [r.__data__ for r in ret]
+    codes = models.Code.select().where(entries = models.Entry.select().where(models.Entry.room_id ==room_id))
+    return [{id: r.id,time: r.time,contest_id:r.contest_id,json_path:r.json_path,codes: [c.__data__ for c in codes]} for r in ret]
 
 
-@app.get("/rooms/{room_id}/run")
-async def run_room(room_id: int):
+#@app.get("/rooms/{room_id}/run")
+#async 
+def run_room(room_id: int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     json = execute(["codeparty_simulator.players.a"+entry.id for entry in entries],room_id)
     return json
@@ -202,7 +204,8 @@ async def room_submit(submit :Submit):
     room = models.Room.create(contest_id =contest_id)
     for cid in code_ids:
         models.Entry.create(room_id = room.id,code_id=cid)
-
+    room.json_path = run_room(room_id = room.id)
+    room.save()
     return room.__data__
 
 ##Entry 
