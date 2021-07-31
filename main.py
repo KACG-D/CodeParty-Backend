@@ -1,5 +1,6 @@
 
 from fastapi import Depends, FastAPI ,  File, UploadFile,Form
+from typing import List
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from auth import get_current_user, get_current_user_with_refresh_token, create_tokens, authenticate
@@ -168,10 +169,8 @@ async def read_codes():
 
 ##Room 
 @app.post("/rooms/", status_code=201)
-async def create_room(contest_id:int,current_user:User = Depends(get_current_user)):
+async def create_room(contest_id:int):
     room = models.Room.create(contest_id =contest_id)
-
-
     return room.__data__ 
 
 @app.get("/rooms/{room_id}")
@@ -189,6 +188,14 @@ async def run_room(room_id: int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     json = execute(["codeparty_simulator.players.a"+entry.id for entry in entries],room_id)
     return json
+
+@app.post("/rooms/submit")
+async def room_submit(contest_id:int, code_ids:List[int]):
+    room = models.Room.create(contest_id =contest_id)
+    for cid in code_ids:
+        create_entry(room_id=room.id,code_id=cid)
+
+    return room.__data__
 
 ##Entry 
 @app.post("/entries/", status_code=201)
