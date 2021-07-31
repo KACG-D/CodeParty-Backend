@@ -35,7 +35,7 @@ class Code(Model):
 class Room(Model):
     id = AutoField(primary_key=True)
     contest_id = IntegerField()
-    time = peewee.DateTimeField(default=datetime.datetime.now)
+    time = DateTimeField(default=datetime.datetime.now)
     json_path = CharField(100,nullable = true)
     class Meta:
         database = db
