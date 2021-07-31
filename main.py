@@ -190,7 +190,7 @@ async def run_room(room_id: int):
     return json
 
 @app.post("/rooms/submit")
-async def room_submit(contest_id:int, code_ids:List[int]= Query(None)):
+async def room_submit(contest_id:int, code_ids:List[int] = []):
     room = models.Room.create(contest_id =contest_id)
     for cid in code_ids:
         models.Entry.create(room_id = room.id,code_id=cid)
