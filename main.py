@@ -36,6 +36,12 @@ class User(BaseModel):
     class Config:
         orm_mode = True
 
+class Submit(BaseModel):
+    code_ids:List[int]
+    contest_id:int
+    class Config:
+        orm_mode = True
+
 class Contest(BaseModel):
     id: int
     class Config:
@@ -190,7 +196,9 @@ async def run_room(room_id: int):
     return json
 
 @app.post("/rooms/submit")
-async def room_submit(contest_id:int, code_ids:List[int] = []):
+async def room_submit(submit :Submit):
+    contest_id = submit.contest_id
+    code_ids = submit.code_ids
     room = models.Room.create(contest_id =contest_id)
     for cid in code_ids:
         models.Entry.create(room_id = room.id,code_id=cid)
