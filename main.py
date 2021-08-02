@@ -194,17 +194,18 @@ async def create_room(contest_id:int):
 
 @app.get("/rooms/{room_id}")
 async def read_room(room_id: int):
-    r = models.Room.get_by_id(room_id)
+    room = models.Room.get_by_id(room_id)
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
-    return {id: r.id,time: r.time,contest_id:r.contest_id,json_path:r.json_path,codes: [c.__data__ for c in codes]}
+    return {id: room.id,time: room.time,contest_id:room.contest_id,json_path:room.json_path,codes: [c.__data__ for c in codes]}
 
 @app.get("/rooms/")
 async def read_rooms():
     rooms = models.Room.select()
     ret = []
     for room in rooms:
-        codes = models.Code.select().where(entries = models.Entry.select().where(models.Entry.room_id ==room.id))
+        entries = models.Entry.select().where(models.Entry.room_id ==room_id)
+        codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
         ret += [{id: room.id,time: room.time,contest_id:room.contest_id,json_path:room.json_path,codes: [c.__data__ for c in codes]}]
     return ret
 
