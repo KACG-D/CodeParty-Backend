@@ -204,7 +204,7 @@ async def read_rooms():
     rooms = models.Room.select()
     ret = []
     for room in rooms:
-        entries = models.Entry.select().where(models.Entry.room_id ==room_id)
+        entries = models.Entry.select().where(models.Entry.room_id ==room.id)
         codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
         ret += [{id: room.id,time: room.time,contest_id:room.contest_id,json_path:room.json_path,codes: [c.__data__ for c in codes]}]
     return ret
