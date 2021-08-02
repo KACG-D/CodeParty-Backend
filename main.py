@@ -123,8 +123,8 @@ def read_user(user_id: int):
 
 
 @app.post("/users/update")
-async def update_user(name:str= Form(...),password:str= Form(...),email:str= Form(...),current_user:User = Depends(get_current_user) ,file: UploadFile = File(None)):
-    
+async def update_user(name:str= Form(...),password:str= Form(...),email:str= Form(...),current_user:User = Depends(get_current_user) ,icon: UploadFile = File(None)):
+    file = icon
     user = models.User.get_by_id(current_user.id)
     user.name = name
     user.password = password
