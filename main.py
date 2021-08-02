@@ -123,12 +123,15 @@ def read_user(user_id: int):
 
 
 @app.post("/users/update")
-async def update_user(name:str= Form(...),password:str= Form(...),email:str= Form(...),current_user:User = Depends(get_current_user) ,icon: UploadFile = File(None)):
+async def update_user(name:str= Form(None),password:str= Form(None),email:str= Form(None),current_user:User = Depends(get_current_user) ,icon: UploadFile = File(None)):
     file = icon
     user = models.User.get_by_id(current_user.id)
-    user.name = name
-    user.password = password
-    user.email = email
+    if(name is not None):
+        user.name = name
+    if(password is not None):
+        user.password = password
+    if(email is not None):
+        user.email = email
 
     if(file != None):
         path =  "http://35.75.64.1:8000/static/usericon/s"+str(current_user.id)+".png"
