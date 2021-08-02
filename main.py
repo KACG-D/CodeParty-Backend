@@ -144,7 +144,7 @@ async def update_user(user_up: UserUp ,current_user:User = Depends(get_current_u
     return ret_dict
 
 @app.post("/users/")
-async def create_user(user_up: UserUp)):
+async def create_user(user_up: UserUp):
     user = models.User.create(name=user_up.name,password= user_up.password,is_admin = False,email = user_up.email)
     auth = authenticate(user.name, user.password)
     ret_dict = {}
