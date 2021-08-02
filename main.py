@@ -123,7 +123,7 @@ def read_user(user_id: int):
 
 
 @app.post("/users/update")
-async def update_user(user_up: UserUp ,current_user:User = Depends(get_current_user ,file: UploadFile = File(None)):
+async def update_user(user_up: UserUp ,current_user:User = Depends(get_current_user) ,file: UploadFile = File(None)):
     
     user = models.User.get_by_id(current_user.id)
     user.name = user_up.name
@@ -149,7 +149,7 @@ async def create_user(user_up: UserUp)):
     auth = authenticate(user.name, user.password)
     ret_dict = {}
     ret_dict["name"] = user.name
-    ret_dict["tokens"] = create_tokens(user.id)
+    ret_dict["tokens"] = crseate_tokens(user.id)
     return ret_dict
     
 
