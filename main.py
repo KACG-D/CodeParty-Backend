@@ -1,6 +1,6 @@
 
 from fastapi import Depends, FastAPI ,  File, UploadFile,Form,Query
-from typing import List
+from typing import List,Optional
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from auth import get_current_user, get_current_user_with_refresh_token, create_tokens, authenticate
@@ -123,25 +123,35 @@ def read_user(user_id: int):
 
 
 @app.post("/users/update")
-async def update_user(user_up: UserUp):
+async def update_user(user_up: UserUp ,current_user:User = Depends(get_current_user ,file: UploadFile = File(None)):
+    
+    user = models.User.get_by_id(current_user.id)
+    user.name = user_up.name
+    user.password = user_up.password
+    user.email = user_up.email
+
+    if(file != None):
+        path =  "http://35.75.64.1:8000/static/usericon/s"+str(current_user.id)+".png"
+        user.icon = path
+        with open(path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+    user.save()
+    ret_dict = {}
+    ret_dict["name"] = user.name
+    ret_dict["tokens"] = create_tokens(user.id)
+
+    return ret_dict
+
+@app.post("/users/")
+async def create_user(user_up: UserUp)):
     user = models.User.create(name=user_up.name,password= user_up.password,is_admin = False,email = user_up.email)
     auth = authenticate(user.name, user.password)
     ret_dict = {}
     ret_dict["name"] = user.name
     ret_dict["tokens"] = create_tokens(user.id)
     return ret_dict
-
-@app.post("/users/")
-async def create_user(user_up: UserUp,current_user:User = Depends(get_current_user)):
-    user = models.User.get_by_id(current_user.id)
-    user.name = user_up.name
-    user.password = user_up.password
-    user.email = user_up.email
-
-    ret_dict = {}
-    ret_dict["name"] = user.name
-    ret_dict["tokens"] = create_tokens(user.id)
-    return ret_dict
+    
 
 @app.post("/users/icon")
 async def create_user_icon(file: UploadFile = File(...),current_user:User = Depends(get_current_user)):
