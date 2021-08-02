@@ -223,8 +223,11 @@ async def read_rooms():
     return ret
 
 
-#@app.get("/rooms/{room_id}/run")
-#async 
+@app.get("/rooms/{room_id}/run")
+async  def run_room_id(room_id: int):
+    return {"json_path":run_room(room_id)}
+
+
 def run_room(room_id: int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     json = execute(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
