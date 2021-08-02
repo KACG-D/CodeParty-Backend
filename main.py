@@ -121,10 +121,23 @@ def read_contest_submitted(contest_id: int,current_user:User = Depends(get_curre
 def read_user(user_id: int):
     return models.User.get_by_id(user_id).__data__ 
 
-@app.post("/users/")
-async def create_user(user_up: UserUp):
+
+@app.post("/users/update")
+async def update_user(user_up: UserUp):
     user = models.User.create(name=user_up.name,password= user_up.password,is_admin = False,email = user_up.email)
     auth = authenticate(user.name, user.password)
+    ret_dict = {}
+    ret_dict["name"] = user.name
+    ret_dict["tokens"] = create_tokens(user.id)
+    return ret_dict
+
+@app.post("/users/")
+async def create_user(user_up: UserUp,current_user:User = Depends(get_current_user)):
+    user = models.User.get_by_id(current_user.id)
+    user.name = user_up.name
+    user.password = user_up.password
+    user.email = user_up.email
+
     ret_dict = {}
     ret_dict["name"] = user.name
     ret_dict["tokens"] = create_tokens(user.id)
@@ -181,13 +194,18 @@ async def create_room(contest_id:int):
 
 @app.get("/rooms/{room_id}")
 async def read_room(room_id: int):
-    return models.Room.get_by_id(room_id).__data__ 
+    r = models.Room.get_by_id(room_id)
+    codes = models.Code.select().where(entries = models.Entry.select().where(models.Entry.room_id ==room_id))
+    return {id: r.id,time: r.time,contest_id:r.contest_id,json_path:r.json_path,codes: [c.__data__ for c in codes]}
 
 @app.get("/rooms/")
 async def read_rooms():
-    ret = models.Room.select()
-    codes = models.Code.select().where(entries = models.Entry.select().where(models.Entry.room_id ==room_id))
-    return [{id: r.id,time: r.time,contest_id:r.contest_id,json_path:r.json_path,codes: [c.__data__ for c in codes]} for r in ret]
+    rooms = models.Room.select()
+    ret = []
+    for room in rooms:
+        codes = models.Code.select().where(entries = models.Entry.select().where(models.Entry.room_id ==room.id))
+        ret += [{id: room.id,time: room.time,contest_id:room.contest_id,json_path:room.json_path,codes: [c.__data__ for c in codes]}]
+    return ret
 
 
 #@app.get("/rooms/{room_id}/run")
