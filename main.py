@@ -215,7 +215,7 @@ async def read_rooms():
 def run_room(room_id: int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     json = execute(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
-    return json
+    return "http://35.75.64.1:8000"+json
 
 @app.post("/rooms/submit")
 async def room_submit(submit :Submit):

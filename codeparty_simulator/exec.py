@@ -23,7 +23,7 @@ def execute(modules,room_id):
     g_con = GameController(players)
     log = g_con.start()
     print(os.listdir(path='/'))
-    filename = './static/json/'+str(room_id)+'.json'
+    filename = '/static/json/'+str(room_id)+'.json'
     with open(filename, 'w') as f:
         json.dump({"game_info":log}, f, indent=4)
     return filename
