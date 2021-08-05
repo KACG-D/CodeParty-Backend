@@ -108,8 +108,8 @@ def read_contest_codes(contest_id: int):
 
 @app.get("/contests/{contest_id}/rooms")
 def read_contest_rooms(contest_id: int):
-    ret =  models.Room.select().where(models.Room.contest_id==contest_id)
-    return [r.__data__ for r in ret]
+    rooms =  models.Room.select().where(models.Room.contest_id==contest_id)
+    return [room_json(room.id) for room in rooms]
 
 @app.get("/contests/{contest_id}/submitted")
 def read_contest_submitted(contest_id: int,current_user:User = Depends(get_current_user)):
@@ -120,7 +120,6 @@ def read_contest_submitted(contest_id: int,current_user:User = Depends(get_curre
 @app.get("/users/{user_id}")
 def read_user(user_id: int):
     return models.User.get_by_id(user_id).__data__ 
-
 
 @app.post("/users/update")
 async def update_user(name:str= Form(None),password:str= Form(None),email:str= Form(None),current_user:User = Depends(get_current_user) ,icon: UploadFile = File(None)):
@@ -205,21 +204,24 @@ async def create_room(contest_id:int):
     room = models.Room.create(contest_id =contest_id)
     return room.__data__ 
 
-@app.get("/rooms/{room_id}")
-async def read_room(room_id: int):
+
+def room_json(room_id:int){
     room = models.Room.get_by_id(room_id)
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
     return {"id": room.id,"time": room.time,"contest_id":room.contest_id,"json_path":room.json_path,"codes": [c.__data__ for c in codes]}
+}
+
+@app.get("/rooms/{room_id}")
+async def read_room(room_id: int):
+    return room_json(room_id)
 
 @app.get("/rooms/")
 async def read_rooms():
     rooms = models.Room.select()
     ret = []
     for room in rooms:
-        entries = models.Entry.select().where(models.Entry.room_id ==room.id)
-        codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
-        ret += [{"id": room.id,"time": room.time,"contest_id":room.contest_id,"json_path":room.json_path,"codes": [c.__data__ for c in codes]}]
+        ret += [room_json(room.id)]
     return ret
 
 
