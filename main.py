@@ -226,11 +226,12 @@ async def read_rooms():
 
 
 @app.get("/rooms/{room_id}/run")
-async  def run_room_id(room_id: int):
-    return {"json_path":run_room(room_id)
+async def run_room_id(room_id: int):
+    return {"json_path":run_room(room_id)}
 
-#https://qiita.com/tdrk/items/9b23ad6a58ac4032bb3bを参考に外部プロセス実行に変更する
-def run_room(room_id: int):
+#https://qiita.com/tdrk/items/9b23ad6a58ac4032bb3b
+
+def run_room(room_id:int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     json = execute(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
     return "http://35.75.64.1:8000"+json
