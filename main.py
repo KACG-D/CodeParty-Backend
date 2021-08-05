@@ -205,12 +205,12 @@ async def create_room(contest_id:int):
     return room.__data__ 
 
 
-def room_json(room_id:int){
+def room_json(room_id:int):
     room = models.Room.get_by_id(room_id)
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
     codes = [models.Code.get_by_id(entry.code_id) for entry in entries]
     return {"id": room.id,"time": room.time,"contest_id":room.contest_id,"json_path":room.json_path,"codes": [c.__data__ for c in codes]}
-}
+
 
 @app.get("/rooms/{room_id}")
 async def read_room(room_id: int):
