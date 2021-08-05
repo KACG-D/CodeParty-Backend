@@ -9,7 +9,7 @@ class User(Model):
     password = CharField(100)
     refresh_token = TextField(null=True)
     is_admin = BooleanField()
-    icon = TextField(null=True)
+    icon = TextField(default="http://35.75.64.1:8000/static/usericon/user.png")
     email = CharField(100,unique = True)
     class Meta:
         database = db
@@ -19,7 +19,7 @@ class Contest(Model):
     name = CharField(100)
     description = TextField(null=True)
     thumb = TextField(null=True)
-    
+
     class Meta:
         database = db
 
