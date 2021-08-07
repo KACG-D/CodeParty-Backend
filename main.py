@@ -1,5 +1,5 @@
 
-from fastapi import Depends, FastAPI ,  File, UploadFile,Form,Query
+from fastapi import Depends, FastAPI ,  File, UploadFile,Form,Query, HTTPException
 from typing import List,Optional
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
