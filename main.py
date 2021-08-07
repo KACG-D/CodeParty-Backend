@@ -246,7 +246,7 @@ async def room_submit(submit :Submit):
     try:
         room.json_path = run_room(room_id = room.id)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=422, detail=str(e))
     room.save()
     return room.__data__
 
