@@ -245,7 +245,7 @@ async def room_submit(submit :Submit):
         models.Entry.create(room_id = room.id,code_id=cid)
     try:
         room.json_path = run_room(room_id = room.id)
-    except Error as e:
+    except Exception as e:
         raise HTTPException(status_code=500, detail=e)
     room.save()
     return room.__data__
