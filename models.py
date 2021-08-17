@@ -19,6 +19,8 @@ class Contest(Model):
     name = CharField(100)
     description = TextField(null=True)
     thumb = TextField(null=True)
+    tutorial = TextField(null=True)
+    unity = TextField(null=True)
 
     class Meta:
         database = db
