@@ -5,7 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from auth import get_current_user, get_current_user_with_refresh_token, create_tokens, authenticate
 from starlette.middleware.cors import CORSMiddleware
-from codeparty_simulator.exec import execute
+from codeparty_simulator.exec import execute_sd
+from square_paint.exec import execute_sp
 import models
 import uvicorn
 import datetime
@@ -231,9 +232,14 @@ async def run_room_id(room_id: int):
 
 #https://qiita.com/tdrk/items/9b23ad6a58ac4032bb3b
 
-def run_room(room_id:int):
+def run_room_sd(room_id:int):
     entries = models.Entry.select().where(models.Entry.room_id ==room_id)
-    json = execute(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
+    json = execute_sd(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
+    return "http://35.75.64.1:8000"+json
+
+def run_room_sp(room_id:int):
+    entries = models.Entry.select().where(models.Entry.room_id ==room_id)
+    json = execute_sp(["static.submit.a"+str(entry.code_id) for entry in entries],room_id)
     return "http://35.75.64.1:8000"+json
 
 @app.post("/rooms/submit")
@@ -241,10 +247,16 @@ async def room_submit(submit :Submit):
     contest_id = submit.contest_id
     code_ids = submit.code_ids
     room = models.Room.create(contest_id =contest_id)
+    contest = models.Contest.get_by_id(contest_id);
     for cid in code_ids:
         models.Entry.create(room_id = room.id,code_id=cid)
+
+    if(contest.name == "Square Drop"):
+        room.json_path = run_room_sd(room_id = room.id)
+    elif(contest.name == "Square Paint"):
+        room.json_path = run_room_sp(room_id = room.id)
     try:
-        room.json_path = run_room(room_id = room.id)
+        print(room.json_path)
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
     room.save()
