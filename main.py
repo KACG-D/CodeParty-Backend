@@ -247,20 +247,21 @@ async def room_submit(submit :Submit):
     contest_id = submit.contest_id
     code_ids = submit.code_ids
     room = models.Room.create(contest_id =contest_id)
-    contest = models.Contest.get_by_id(contest_id);
+    contest = models.Contest.get_by_id(contest_id)
+    json_path = None
     for cid in code_ids:
         models.Entry.create(room_id = room.id,code_id=cid)
 
-    if(contest.name == "Square Drop"):
-        room.json_path = run_room_sd(room_id = room.id)
-    elif(contest.name == "Square Paint"):
-        room.json_path = run_room_sp(room_id = room.id)
     try:
-        print(room.json_path)
+        if(contest.name == "Square Drop"):
+            json_path = run_room_sd(room_id = room.id)
+        elif(contest.name == "Square Paint"):
+            json_path = run_room_sp(room_id = room.id)
     except Exception as e:
         raise HTTPException(status_code=422, detail=str(e))
-    room.save()
-    return room.__data__
+    q = models.Room.update({models.Room.json_path:json_path}).where(models.Room.id == room.id)
+    q.execute()
+    return models.Room.get_by_id(room.id).__data__
 
 ##Entry 
 @app.post("/entries/", status_code=201)
