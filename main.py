@@ -152,7 +152,7 @@ async def create_user(user_up: UserUp):
     auth = authenticate(user.name, user.password)
     ret_dict = {}
     ret_dict["name"] = user.name
-    ret_dict["tokens"] = crseate_tokens(user.id)
+    ret_dict["tokens"] = create_tokens(user.id)
     return ret_dict
     
 
